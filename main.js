@@ -1,4 +1,4 @@
 const Field = require('./field.js');
 
-const myField = new Field(Field.generateField(10, 10, 19));
+const myField = new Field(Field.generateField(15, 10, 15));
 myField.playGame();
