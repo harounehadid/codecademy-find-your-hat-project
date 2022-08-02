@@ -29,11 +29,9 @@ class Field {
 
   updateGame(direction) {
     this.updatePosition(direction);
-
-    const land = this.checkWhatLandedOn();
-    const isSafe = this.playerIsSafe(land);
-
-    if (isSafe) this.isHatFound = this.checkIfHatFound(land);
+    
+    const isSafe = this.isInBoundaries() && !this.steppedOn(hole);
+    if (isSafe) this.isHatFound = this.steppedOn(hat);
 
     if (!isSafe || this.isHatFound) {
       this.isGameOver = true;
@@ -81,22 +79,18 @@ class Field {
     this.curPosition = nextPos;
   }
 
-  checkWhatLandedOn() {
+  isInBoundaries() {
+    return (
+      this.curPosition.x >= 0 && 
+      this.curPosition.y >= 0 &&
+      this.curPosition.y < this.field.length &&
+      this.curPosition.x < this.field[0].length
+    );
+  }
+
+  steppedOn(fieldCharacter) {
     const {x, y} = this.curPosition;
-    return (x >= 0 && y >= 0) ? this.field[y][x] : undefined;
-  }
-
-  playerIsSafe(land) {
-    const conditionOne = this.curPosition.x >= 0 && 
-                         this.curPosition.y >= 0 &&
-                         this.curPosition.x < this.field.length &&
-                         this.curPosition.y < this.field[0].length;
-    const conditionTwo = land !== hole;
-    return conditionOne && conditionTwo;
-  }
-
-  checkIfHatFound(land) {
-    return land === hat;
+    return this.field[y][x] === fieldCharacter;
   }
 
   updateField() {
@@ -134,12 +128,12 @@ class Field {
   static generateField(width, height, holesPercentage) {
 
     let holesToAdd = Field.calculateHolesNumber(width * height, holesPercentage);
-    
+    console.log(holesToAdd);
     const newField = [];
     
-    for (let i = 0; i < width; i++) {
+    for (let i = 0; i < height; i++) {
       newField[i] = [];
-      for (let j = 0; j < height; j++) {
+      for (let j = 0; j < width; j++) {
         // Covering the whole of the field with fieldCharacter
         newField[i][j] = fieldCharacter;
       }
@@ -158,14 +152,13 @@ class Field {
         hatPos.x = Math.floor(Math.random() * width);
         hatPos.y = Math.floor(Math.random() * height);
     }
-
+    
     newField[hatPos.y][hatPos.x] = hat;
 
     // Add the holes
-    do {
-
-        for (let i = 0; i < width; i++) {
-            for (let j = 0; j < height; j++) {
+    while(holesToAdd > 0) {     
+        for (let i = 0; i < height; i++) {
+            for (let j = 0; j < width; j++) {
             let addHole = (Math.random() * 10) > 8;
                 const curElement = newField[i][j];
                 if (addHole && curElement === fieldCharacter) {
@@ -174,10 +167,8 @@ class Field {
                 }
             }
         }
+    }
 
-    } while(holesToAdd > 0);
-
-    
     return newField;
   }
 
