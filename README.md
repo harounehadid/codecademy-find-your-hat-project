@@ -16,6 +16,9 @@ JavaScript running on the Node environment.
 ### The Aim of the Project
 It's about creating a navigation game where you should go through the map looking for your hat while avoiding 
 falling into holes or getting out of the field's boundaries.
+<br>
+<br>
+<img src="/resources/project-screenshot.png" alt="Screenshot of the App" />
 
 ## How to Run It
 ### `git clone`
